@@ -170,11 +170,12 @@ streaming:
 ## CLI 命令
 
 ```bash
-python -m hermes_lark_streaming status     # 查看状态
-python -m hermes_lark_streaming verify     # 验证兼容性（不修改文件）
-python -m hermes_lark_streaming install    # 注入 hook
-python -m hermes_lark_streaming uninstall  # 移除 hook
-python -m hermes_lark_streaming restore    # 从备份恢复原始 run.py
+HERMES_PYTHON=~/.hermes/hermes-agent/venv/bin/python3
+$HERMES_PYTHON -m hermes_lark_streaming status     # 查看状态
+$HERMES_PYTHON -m hermes_lark_streaming verify     # 验证兼容性（不修改文件）
+$HERMES_PYTHON -m hermes_lark_streaming install    # 注入 hook
+$HERMES_PYTHON -m hermes_lark_streaming uninstall  # 移除 hook
+$HERMES_PYTHON -m hermes_lark_streaming restore    # 从备份恢复原始 run.py
 ```
 
 ---
@@ -203,8 +204,9 @@ hermes_lark_streaming/
 ## 卸载
 
 ```bash
-python -m hermes_lark_streaming uninstall
-pip uninstall hermes-lark-streaming
+HERMES_PYTHON=~/.hermes/hermes-agent/venv/bin/python3
+$HERMES_PYTHON -m hermes_lark_streaming uninstall
+$HERMES_PYTHON -m pip uninstall hermes-lark-streaming
 ```
 
 ---
