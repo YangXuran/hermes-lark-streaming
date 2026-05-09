@@ -9,6 +9,8 @@ Inspired by [openclaw-lark](https://github.com/larksuite/openclaw-lark) and [her
 
 [中文文档](README.md)
 
+![](assets/cover.jpg)
+
 ---
 
 ## Features

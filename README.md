@@ -9,6 +9,8 @@
 
 [English](README.en.md)
 
+![](assets/cover.jpg)
+
 ---
 
 ## 功能
