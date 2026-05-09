@@ -95,7 +95,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `hermes-lark-streaming` 初始版本 — 基于飞书 CardKit v2.0 的 Hermes Gateway 实时流式卡片插件。
 - 通过 CardKit `streaming_mode` 实现打字机效果的流式输出。
-- 可折叠面板展示推理/思考过程。
+- 展示推理/思考内容。
 - 实时工具调用状态追踪，含图标、结果块和错误块。
 - CardKit 流式失败或频控时自动降级到 IM PATCH。
 - 完成态卡片，页脚展示元数据（耗时、模型、token 用量、上下文窗口）。
@@ -116,7 +116,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release of `hermes-lark-streaming` — a real-time streaming card plugin for Hermes Gateway via Feishu/Lark CardKit v2.0.
 - Streaming output with typewriter effect via CardKit `streaming_mode`.
-- Reasoning/thinking display in collapsible panels.
+- Display reasoning/thinking content.
 - Live tool-use status tracking with icons, result blocks, and error blocks.
 - Auto fallback from CardKit streaming to IM PATCH on creation failure or rate limiting.
 - Completion card with footer metadata (duration, model, tokens, context usage).

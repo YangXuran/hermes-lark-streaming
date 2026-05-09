@@ -16,7 +16,7 @@ Inspired by [openclaw-lark](https://github.com/larksuite/openclaw-lark) and [her
 ## Features
 
 - **Streaming output** — AI responses rendered in real-time interactive cards with typewriter effect
-- **Reasoning display** — Shows model thinking/reasoning content in collapsible panels
+- **Reasoning display** — Shows model thinking/reasoning content
 - **Tool use tracking** — Live tool call status with standard icons, result/error blocks
 - **CardKit v2.0** — Prefers Feishu CardKit streaming API, auto-fallback to IM PATCH
 - **Completion card** — Final card with token usage, duration, and context info
@@ -137,7 +137,7 @@ The plugin injects **7 hook calls** into `gateway/run.py` via AST patching. All 
 ```
 User sends message
   → Card session created
-  → Streaming updates (reasoning, tool status, text — throttled)
+  → Streaming updates (tool status, text — throttled)
   → Image URL async resolution
   → Completion card (tokens, duration, context)
 ```
