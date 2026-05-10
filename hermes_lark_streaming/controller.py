@@ -445,10 +445,20 @@ class StreamCardController:
 
         display = session.text.display_text
         if not session.text.is_dirty(display):
+            _logger.info(
+                "update_card skipped (not dirty): msg=%s len=%d",
+                session.message_id[:12], len(display),
+            )
             return
 
         if session.image_resolver:
             display = session.image_resolver.resolve_images(display)
+
+        _logger.info(
+            "update_card: msg=%s seq=%d len=%d cardkit=%s",
+            session.message_id[:12], session.sequence + 1,
+            len(display), session.use_cardkit,
+        )
 
         try:
             if session.use_cardkit and session.card_id:
@@ -515,6 +525,12 @@ class StreamCardController:
                     },
                 }]
             session.sequence += 1
+            _logger.info(
+                "tool_update: msg=%s seq=%d action=%s steps=%d",
+                session.message_id[:12], session.sequence,
+                "add" if not session.tool_panel_added else "update",
+                len(tool_steps),
+            )
             await self._client.cardkit_batch_update(
                 session.card_id, actions, sequence=session.sequence,
             )
@@ -536,6 +552,12 @@ class StreamCardController:
         session.flush.mark_completed()
 
         display = session.text.display_text
+        _logger.info(
+            "do_complete: msg=%s state=%s display_len=%d cardkit=%s seq=%d",
+            session.message_id[:12], session.state,
+            len(display), session.use_cardkit,
+            session.sequence,
+        )
         if session.image_resolver:
             try:
                 display = await session.image_resolver.resolve_await(display)
