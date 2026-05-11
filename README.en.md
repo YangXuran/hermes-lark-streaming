@@ -117,6 +117,44 @@ Default (when not configured): `fields: [[status, elapsed, context, model]]`, `s
 
 ---
 
+## CLI Commands
+
+```bash
+HERMES_PYTHON=~/.hermes/hermes-agent/venv/bin/python3
+$HERMES_PYTHON -m hermes_lark_streaming verify     # Verify compatibility (no file changes)
+$HERMES_PYTHON -m hermes_lark_streaming install    # Inject hooks
+$HERMES_PYTHON -m hermes_lark_streaming uninstall  # Remove hooks
+$HERMES_PYTHON -m hermes_lark_streaming restore    # Restore original run.py from backup
+$HERMES_PYTHON -m hermes_lark_streaming status     # Show status
+```
+
+---
+
+## Update
+
+```bash
+cd hermes-lark-streaming
+git pull
+HERMES_PYTHON=~/.hermes/hermes-agent/venv/bin/python3
+$HERMES_PYTHON -m pip install -e .
+$HERMES_PYTHON -m hermes_lark_streaming uninstall   # Remove old injection first
+$HERMES_PYTHON -m hermes_lark_streaming verify
+$HERMES_PYTHON -m hermes_lark_streaming install
+hermes gateway restart
+```
+
+---
+
+## Uninstall
+
+```bash
+HERMES_PYTHON=~/.hermes/hermes-agent/venv/bin/python3
+$HERMES_PYTHON -m hermes_lark_streaming uninstall
+$HERMES_PYTHON -m pip uninstall hermes-lark-streaming
+```
+
+---
+
 ## How It Works
 
 The plugin injects **7 hook calls** into `gateway/run.py` via AST patching. All business logic lives in the `hermes_lark_streaming` package:
@@ -153,9 +191,7 @@ If a message is deleted/recalled, UnavailableGuard auto-terminates further updat
 
 ![](assets/interrupt.jpg)
 
----
-
-## Degradation Strategy
+**Degradation strategy:**
 
 | Strategy | Interval | Trigger |
 |----------|----------|---------|
@@ -163,50 +199,6 @@ If a message is deleted/recalled, UnavailableGuard auto-terminates further updat
 | IM PATCH (fallback) | 1.5s | CardKit creation failure, table limit exceeded |
 | Rate limiting | — | Skips current frame, no channel degradation |
 | Completion failure | — | Gateway falls back to default text reply |
-
----
-
-## CLI Commands
-
-```bash
-HERMES_PYTHON=~/.hermes/hermes-agent/venv/bin/python3
-$HERMES_PYTHON -m hermes_lark_streaming status     # Show status
-$HERMES_PYTHON -m hermes_lark_streaming verify     # Verify compatibility (no file changes)
-$HERMES_PYTHON -m hermes_lark_streaming install    # Inject hooks
-$HERMES_PYTHON -m hermes_lark_streaming uninstall  # Remove hooks
-$HERMES_PYTHON -m hermes_lark_streaming restore    # Restore original run.py from backup
-```
-
----
-
-## File Structure
-
-```
-hermes_lark_streaming/
-├── __init__.py            # Package entry + register() plugin API
-├── __main__.py            # CLI: install / uninstall / status / verify / restore
-├── cardkit.py             # CardKit v2.0 card template builder
-├── config.py              # Config reader (config.yaml + env vars)
-├── controller.py          # Streaming card controller (singleton)
-├── feishu.py              # Feishu API client (lark-oapi SDK)
-├── flush.py               # Throttle scheduler (exception-safe + wait_for_flush)
-├── image.py               # Image URL resolver (sync strip + async upload + callback)
-├── text.py                # Streaming text accumulator (reasoning extraction + delta tracking)
-├── tooluse.py             # Tool call tracker (icon mapping + result block formatting)
-├── unavailable_guard.py   # Message unavailability guard (delete/recall detection)
-├── patch.py               # 7 hook functions (called by injected code)
-└── patcher.py             # AST patcher (modifies run.py)
-```
-
----
-
-## Uninstall
-
-```bash
-HERMES_PYTHON=~/.hermes/hermes-agent/venv/bin/python3
-$HERMES_PYTHON -m hermes_lark_streaming uninstall
-$HERMES_PYTHON -m pip uninstall hermes-lark-streaming
-```
 
 ---
 

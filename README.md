@@ -117,6 +117,44 @@ streaming:
 
 ---
 
+## CLI 命令
+
+```bash
+HERMES_PYTHON=~/.hermes/hermes-agent/venv/bin/python3
+$HERMES_PYTHON -m hermes_lark_streaming verify     # 验证兼容性（不修改文件）
+$HERMES_PYTHON -m hermes_lark_streaming install    # 注入 hook
+$HERMES_PYTHON -m hermes_lark_streaming uninstall  # 移除 hook
+$HERMES_PYTHON -m hermes_lark_streaming restore    # 从备份恢复原始 run.py
+$HERMES_PYTHON -m hermes_lark_streaming status     # 查看状态
+```
+
+---
+
+## 更新
+
+```bash
+cd hermes-lark-streaming
+git pull
+HERMES_PYTHON=~/.hermes/hermes-agent/venv/bin/python3
+$HERMES_PYTHON -m pip install -e .
+$HERMES_PYTHON -m hermes_lark_streaming uninstall   # 先移除旧注入
+$HERMES_PYTHON -m hermes_lark_streaming verify
+$HERMES_PYTHON -m hermes_lark_streaming install
+hermes gateway restart
+```
+
+---
+
+## 卸载
+
+```bash
+HERMES_PYTHON=~/.hermes/hermes-agent/venv/bin/python3
+$HERMES_PYTHON -m hermes_lark_streaming uninstall
+$HERMES_PYTHON -m pip uninstall hermes-lark-streaming
+```
+
+---
+
 ## 工作原理
 
 插件通过 AST 注入在 `gateway/run.py` 的 **7 个位置**插入 hook 调用，所有业务逻辑在 `hermes_lark_streaming` 包内完成：
@@ -153,9 +191,7 @@ streaming:
 
 ![](assets/interrupt.jpg)
 
----
-
-## 降级策略
+**降级策略：**
 
 | 策略 | 间隔 | 触发条件 |
 |------|------|----------|
@@ -163,50 +199,6 @@ streaming:
 | IM PATCH（降级） | 1.5s | CardKit 创建失败、表格超限等 |
 | 速率限制 | — | 跳过当前帧，不降级通道 |
 | 终态卡片失败 | — | Gateway 回退到默认文本回复 |
-
----
-
-## CLI 命令
-
-```bash
-HERMES_PYTHON=~/.hermes/hermes-agent/venv/bin/python3
-$HERMES_PYTHON -m hermes_lark_streaming status     # 查看状态
-$HERMES_PYTHON -m hermes_lark_streaming verify     # 验证兼容性（不修改文件）
-$HERMES_PYTHON -m hermes_lark_streaming install    # 注入 hook
-$HERMES_PYTHON -m hermes_lark_streaming uninstall  # 移除 hook
-$HERMES_PYTHON -m hermes_lark_streaming restore    # 从备份恢复原始 run.py
-```
-
----
-
-## 文件结构
-
-```
-hermes_lark_streaming/
-├── __init__.py            # 包入口 + register() 插件 API
-├── __main__.py            # CLI: install / uninstall / status / verify / restore
-├── cardkit.py             # CardKit v2.0 卡片模板构建
-├── config.py              # 配置读取（config.yaml + 环境变量）
-├── controller.py          # 流式卡片主控制器（单例）
-├── feishu.py              # 飞书 API 客户端（lark-oapi SDK）
-├── flush.py               # 节流调度器（异常安全 + wait_for_flush）
-├── image.py               # 图片 URL 解析（同步 strip + 异步上传 + 回调）
-├── text.py                # 流式文本累积器（reasoning 提取 + 增量追踪）
-├── tooluse.py             # 工具调用追踪（图标映射 + 结果块格式化）
-├── unavailable_guard.py   # 消息不可用保护（删除/撤回检测 + 终止 pipeline）
-├── patch.py               # 7 个 hook 函数（被注入代码调用）
-└── patcher.py             # AST 注入器（修改 run.py）
-```
-
----
-
-## 卸载
-
-```bash
-HERMES_PYTHON=~/.hermes/hermes-agent/venv/bin/python3
-$HERMES_PYTHON -m hermes_lark_streaming uninstall
-$HERMES_PYTHON -m pip uninstall hermes-lark-streaming
-```
 
 ---
 
