@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.4.3] - 2026-05-12
+
+### 修复
+
+- 修复 `message_id` 为 `None` 时 `on_message_started` 崩溃（`TypeError: 'NoneType' object is not subscriptable`），导致后续所有流式卡片失效直到重启。
+- 修复 `_prune_stale_sessions` 遇到 `None` 键时崩溃的问题。
+
+### Fixed
+
+- Fix `on_message_started` crash when `message_id` is `None` (`TypeError: 'NoneType' object is not subscriptable`), which broke all subsequent streaming cards until gateway restart.
+- Fix `_prune_stale_sessions` crash when encountering `None` keys in session map.
+
+---
+
 ## [0.4.2] - 2026-05-11
 
 ### 变更
