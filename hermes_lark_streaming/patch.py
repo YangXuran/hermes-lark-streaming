@@ -29,7 +29,7 @@ def _safe_hook(
                     return default_return
                 return func(ctrl=ctrl, message_id=message_id, **kwargs)
             except Exception as exc:
-                getattr(_logger, log_level)("%s error: %s", func.__name__, exc)
+                getattr(_logger, log_level)("%s error: %s", func.__name__, exc, exc_info=True)
                 return default_return
         return wrapper
     return decorator

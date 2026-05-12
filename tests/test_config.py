@@ -69,6 +69,14 @@ class TestFooterFields:
         cfg = _make_config({})
         assert cfg.footer_fields == [["status", "elapsed", "context", "model"]]
 
+    def test_fields_non_list_returns_default(self) -> None:
+        cfg = _make_config({"streaming": {"footer": {"fields": "status"}}})
+        assert cfg.footer_fields == [["status", "elapsed", "context", "model"]]
+
+    def test_fields_int_returns_default(self) -> None:
+        cfg = _make_config({"streaming": {"footer": {"fields": 42}}})
+        assert cfg.footer_fields == [["status", "elapsed", "context", "model"]]
+
 
 class TestFooterShowLabel:
     def test_true(self) -> None:

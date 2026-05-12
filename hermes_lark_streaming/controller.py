@@ -496,7 +496,7 @@ class StreamCardController:
                     session.flush.set_throttle(PATCH_MS)
                     return
 
-            _logger.warning("card update failed: %s", e)
+            _logger.warning("card update failed: %s", e, exc_info=True)
 
     async def _do_tool_use_status_update(self, session: CardSession) -> None:
         if not session.card_id or session.state in _TERMINAL:
@@ -535,7 +535,7 @@ class StreamCardController:
             )
             session.tool_panel_added = True
         except Exception as e:
-            _logger.debug("tool use status update failed: %s", e)
+            _logger.debug("tool use status update failed: %s", e, exc_info=True)
 
     async def _do_complete(self, session: CardSession) -> bool:
         try:
@@ -604,6 +604,7 @@ class StreamCardController:
                     "code=%s msg=%s card_id=%s seq=%d",
                     attempt, e.code, e,
                     session.card_id, session.sequence,
+                    exc_info=True,
                 )
                 if session.guard.terminate("_do_complete", e):
                     return False
@@ -616,6 +617,7 @@ class StreamCardController:
                     "card_id=%s card_msg_id=%s seq=%d",
                     attempt, type(e).__name__, e,
                     session.card_id, session.card_msg_id, session.sequence,
+                    exc_info=True,
                 )
                 if attempt < 2:
                     await asyncio.sleep(2 ** attempt)
@@ -637,8 +639,7 @@ class StreamCardController:
             del self._interrupt_map[k]
         session.flush.mark_completed()
         if session.image_resolver:
-            for task in session.image_resolver._pending.values():
-                task.cancel()
+            session.image_resolver.cancel_pending()
 
     def _prune_stale_sessions(self) -> None:
         now = time.time()

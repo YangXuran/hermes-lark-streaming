@@ -10,6 +10,22 @@ import pytest
 from hermes_lark_streaming.image import ImageResolver
 
 
+class TestCancelPending:
+    def test_cancel_pending_clears_tasks(self) -> None:
+        r, _ = _make_resolver()
+        fake_task = MagicMock()
+        r._pending["https://a.com/1.png"] = fake_task
+        r._pending["https://b.com/2.png"] = MagicMock()
+        r.cancel_pending()
+        fake_task.cancel.assert_called_once()
+        assert len(r._pending) == 0
+
+    def test_cancel_pending_empty_is_safe(self) -> None:
+        r, _ = _make_resolver()
+        r.cancel_pending()  # 不应抛异常
+        assert len(r._pending) == 0
+
+
 def _make_resolver(
     upload_result: str | None = "img_v3_fake123",
     on_resolved: object = None,

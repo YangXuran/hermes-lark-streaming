@@ -52,8 +52,10 @@ class Config:
         fields = footer.get("fields")
         if not fields:
             return self._default_footer_fields()
+        if not isinstance(fields, list):
+            return self._default_footer_fields()
         # 一维数组自动包装为二维
-        if isinstance(fields[0], str):
+        if fields and isinstance(fields[0], str):
             return [fields]
         return fields
 

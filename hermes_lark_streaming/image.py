@@ -95,6 +95,12 @@ class ImageResolver:
         # 第二遍：替换已完成的
         return self.resolve_images(text)
 
+    def cancel_pending(self) -> None:
+        """取消所有正在进行的上传任务（用于 session 清理）."""
+        for task in self._pending.values():
+            task.cancel()
+        self._pending.clear()
+
     def _start_upload(self, url: str) -> None:
         try:
             loop = asyncio.get_running_loop()
@@ -115,7 +121,7 @@ class ImageResolver:
             self._failed.add(url)
             return None
         except Exception as exc:
-            _logger.debug("image_resolver: upload failed for %s: %s", url, exc)
+            _logger.debug("image_resolver: upload failed for %s: %s", url, exc, exc_info=True)
             self._failed.add(url)
             return None
         finally:

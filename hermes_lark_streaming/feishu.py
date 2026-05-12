@@ -274,6 +274,7 @@ class FeishuClient:
                 None, self._download_image, image_url,
             )
         except Exception:
+            _logger.debug("image upload failed for %s", image_url, exc_info=True)
             return None
 
         if data is None:
@@ -305,4 +306,5 @@ class FeishuClient:
                     return None
                 return resp.read()
         except (URLError, OSError):
+            _logger.debug("image download failed: %s", url)
             return None
